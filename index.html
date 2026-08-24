@@ -79,17 +79,17 @@
 
   <div class="eyebrow">🧮 CALCULADORA DE COMISSÃO</div>
   <h1>Quanto vai cair na sua comissão?</h1>
-  <p class="sub">Informe a meta do mês e o quanto você realizou. O cálculo interpola a tabela oficial de performance × comissão.</p>
+  <p class="sub">Informe a meta do mês em casos e quantos casos você realizou. O cálculo interpola a tabela oficial de performance × comissão.</p>
 
   <div class="card">
     <div class="row">
       <div>
-        <div class="label">🎯 Meta do mês (R$)</div>
-        <input class="field" id="meta" inputmode="decimal" placeholder="Ex: 100.000" />
+        <div class="label">🎯 Meta do mês (casos)</div>
+        <input class="field" id="meta" inputmode="numeric" placeholder="Ex: 20" />
       </div>
       <div>
-        <div class="label">📈 Realizado (R$)</div>
-        <input class="field" id="realizado" inputmode="decimal" placeholder="Ex: 118.500" />
+        <div class="label">📈 Realizado (casos)</div>
+        <input class="field" id="realizado" inputmode="numeric" placeholder="Ex: 23" />
       </div>
     </div>
   </div>
@@ -158,6 +158,12 @@ function parseNum(str){
   const cleaned = str.replace(/\./g,'').replace(',', '.');
   return parseFloat(cleaned);
 }
+function fmtCasos(v){
+  const rounded = Math.round(v * 10) / 10;
+  const isInt = Math.abs(rounded - Math.round(rounded)) < 0.05;
+  const num = isInt ? Math.round(rounded) : rounded.toFixed(1).replace('.', ',');
+  return `${num} caso${(isInt ? Math.round(rounded) : rounded) === 1 ? '' : 's'}`;
+}
 
 function renderTable(bracket, performanceValid, performance){
   const el = document.getElementById('tableBody');
@@ -205,7 +211,7 @@ function update(){
     extraNote = `<div class="note">Performance de 200% ou mais — comissão máxima da tabela (R$ 22.500).</div>`;
   } else if(nextBracket){
     const faltam = ((nextBracket.perf - performance) / 100) * metaNum;
-    extraNote = `<div class="note">Faltam <strong>${fmtBRL(faltam)}</strong> em vendas para chegar em ${nextBracket.perf}% e subir a faixa de comissão.</div>`;
+    extraNote = `<div class="note">Faltam <strong>${fmtCasos(faltam)}</strong> para chegar em ${nextBracket.perf}% e subir a faixa de comissão.</div>`;
   }
 
   resultContent.innerHTML = `
